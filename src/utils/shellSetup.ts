@@ -7,13 +7,13 @@ const MARKER_START = '# goldeneye - coding agent launcher (start)';
 const MARKER_END = '# goldeneye - coding agent launcher (end)';
 
 const SHELL_BLOCK = `${MARKER_START}
-if [ -t 1 ]; then
+if [ -t 0 ] && [ -t 1 ]; then
   goldeneye
 fi
 ${MARKER_END}`;
 
 const FISH_BLOCK = `${MARKER_START}
-if isatty 1
+if isatty 0; and isatty 1
   goldeneye
 end
 ${MARKER_END}`;

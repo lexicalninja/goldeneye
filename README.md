@@ -107,6 +107,12 @@ goldeneye uninstall  # Remove from shell startup
 
 Supports zsh, bash, and fish shells.
 
+### Update
+
+```bash
+goldeneye update
+```
+
 ## Keyboard Shortcuts
 
 | Key | Action |

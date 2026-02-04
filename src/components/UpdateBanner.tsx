@@ -18,7 +18,7 @@ export function UpdateBanner({ currentVersion, latestVersion }: UpdateBannerProp
       <Text color="yellow">
         Update available: {currentVersion} → {latestVersion}
         {' '}
-        <Text color="gray">Run: curl -fsSL https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh | bash</Text>
+        <Text color="gray">Run: goldeneye update</Text>
       </Text>
     </Box>
   );

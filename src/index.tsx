@@ -23,11 +23,12 @@ const cli = meow(
     $ goldeneye install      Add to shell startup
     $ goldeneye uninstall    Remove from shell startup
     $ goldeneye list         List detected agents
+    $ goldeneye update       Update to the latest version
 
   ${chalk.bold('Options')}
     --help       Show this help message
     --version    Show version number
-    --update     Update to the latest version
+    --update     Update to the latest version (same as goldeneye update)
 
   ${chalk.bold('Keyboard Shortcuts')} (in UI)
     ↑/↓          Navigate
@@ -89,6 +90,11 @@ async function main() {
   }
 
   switch (command) {
+    case 'update': {
+      await runUpdate();
+      break;
+    }
+
     case 'install': {
       const result = install();
       if (result.success) {
@@ -125,9 +131,7 @@ async function main() {
           chalk.yellow('⚡ Update available:'),
           chalk.gray(`${updateInfo.currentVersion} → ${updateInfo.latestVersion}`),
         );
-        console.log(
-          chalk.gray('   Run: curl -fsSL https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh | bash\n'),
-        );
+        console.log(chalk.gray('   Run: goldeneye update\n'));
       }
 
       if (installed.length === 0) {

@@ -1,7 +1,10 @@
 import { getVersion } from './version.js';
 
 const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/lexicalninja/goldeneye/main/package.json';
-const CHECK_TIMEOUT = 3000; // 3 seconds
+const CHECK_TIMEOUT = 5000; // 5 seconds
+const MAX_RETRIES = 2;
+
+const DEBUG = process.env.GOLDENEYE_DEBUG === '1';
 
 interface UpdateInfo {
   currentVersion: string;
@@ -24,41 +27,69 @@ function compareVersions(current: string, latest: string): boolean {
   return false;
 }
 
+async function fetchLatestVersion(): Promise<string | null> {
+  const url = `${GITHUB_RAW_BASE}?t=${Date.now()}`;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), CHECK_TIMEOUT);
+
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'goldeneye-cli',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+        },
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (DEBUG) console.error(`[goldeneye] Update check failed: HTTP ${response.status}`);
+        continue;
+      }
+
+      const packageJson = (await response.json()) as { version?: string };
+      const latestVersion = packageJson.version;
+
+      if (!latestVersion) {
+        if (DEBUG) console.error('[goldeneye] Update check failed: no version in response');
+        continue;
+      }
+
+      return latestVersion;
+    } catch (err) {
+      if (DEBUG) console.error('[goldeneye] Update check failed:', (err as Error).message);
+      if (attempt < MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+  }
+
+  return null;
+}
+
 export async function checkForUpdates(): Promise<UpdateInfo | null> {
   const currentVersion = getVersion();
+  const latestVersion = await fetchLatestVersion();
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), CHECK_TIMEOUT);
-
-    const url = `${GITHUB_RAW_BASE}?t=${Date.now()}`;
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'goldeneye-cli',
-      },
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const packageJson = await response.json() as { version?: string };
-    const latestVersion = packageJson.version;
-
-    if (!latestVersion) {
-      return null;
-    }
-
-    return {
-      currentVersion,
-      latestVersion,
-      updateAvailable: compareVersions(currentVersion, latestVersion),
-    };
-  } catch {
-    // Silently fail - don't block the app if update check fails
+  if (!latestVersion) {
     return null;
   }
+
+  const updateAvailable = compareVersions(currentVersion, latestVersion);
+
+  if (DEBUG) {
+    console.error(
+      `[goldeneye] Update check: current=${currentVersion} latest=${latestVersion} available=${updateAvailable}`
+    );
+  }
+
+  return {
+    currentVersion,
+    latestVersion,
+    updateAvailable,
+  };
 }

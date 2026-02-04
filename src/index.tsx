@@ -49,6 +49,8 @@ const cli = meow(
 
 const command = cli.input[0];
 
+const INSTALL_SCRIPT_URL = 'https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh';
+
 async function runUpdate(): Promise<void> {
   const { spawn } = await import('node:child_process');
 
@@ -65,10 +67,17 @@ async function runUpdate(): Promise<void> {
     console.log(chalk.gray(`Updating ${updateInfo.currentVersion} → ${updateInfo.latestVersion}\n`));
   }
 
-  const child = spawn('bash', ['-c', 'curl -fsSL https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh | bash'], {
-    stdio: 'inherit',
-    shell: true,
+  const response = await fetch(`${INSTALL_SCRIPT_URL}?t=${Date.now()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch install script: HTTP ${response.status}`);
+  }
+
+  const script = await response.text();
+  const child = spawn('bash', ['-s'], {
+    stdio: ['pipe', 'inherit', 'inherit'],
   });
+  child.stdin.write(script);
+  child.stdin.end();
 
   return new Promise((resolve, reject) => {
     child.on('exit', (code) => {

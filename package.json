@@ -1,6 +1,6 @@
 {
   "name": "goldeneye",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Coding Agent Launcher - Auto-detect and launch coding agents from a sleek TUI",
   "type": "module",
   "main": "dist/index.js",

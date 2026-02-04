@@ -27,6 +27,7 @@ const cli = meow(
   ${chalk.bold('Options')}
     --help       Show this help message
     --version    Show version number
+    --update     Update to the latest version
 
   ${chalk.bold('Keyboard Shortcuts')} (in UI)
     ↑/↓          Navigate
@@ -35,14 +36,58 @@ const cli = meow(
 `,
   {
     importMeta: import.meta,
-    flags: {},
+    flags: {
+      update: {
+        type: 'boolean',
+        shortFlag: 'u',
+      },
+    },
     version,
   }
 );
 
 const command = cli.input[0];
 
+async function runUpdate(): Promise<void> {
+  const { spawn } = await import('node:child_process');
+
+  console.log(chalk.yellow.bold('\nGOLDENEYE') + ' - Updating...\n');
+
+  // Check for updates first
+  const updateInfo = await checkForUpdates();
+  if (updateInfo && !updateInfo.updateAvailable) {
+    console.log(chalk.green('✓'), `Already on latest version (${updateInfo.currentVersion})`);
+    return;
+  }
+
+  if (updateInfo) {
+    console.log(chalk.gray(`Updating ${updateInfo.currentVersion} → ${updateInfo.latestVersion}\n`));
+  }
+
+  const child = spawn('bash', ['-c', 'curl -fsSL https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh | bash'], {
+    stdio: 'inherit',
+    shell: true,
+  });
+
+  return new Promise((resolve, reject) => {
+    child.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Update failed with exit code ${code}`));
+      }
+    });
+    child.on('error', reject);
+  });
+}
+
 async function main() {
+  // Handle --update flag
+  if (cli.flags.update) {
+    await runUpdate();
+    return;
+  }
+
   switch (command) {
     case 'install': {
       const result = install();

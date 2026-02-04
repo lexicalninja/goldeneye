@@ -5,14 +5,12 @@ interface UpdateCheckResult {
   updateAvailable: boolean;
   latestVersion: string | null;
   currentVersion: string | null;
-  checking: boolean;
 }
 
 export function useUpdateCheck(): UpdateCheckResult {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
   const [currentVersion, setCurrentVersion] = useState<string | null>(null);
-  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -24,10 +22,6 @@ export function useUpdateCheck(): UpdateCheckResult {
         setUpdateAvailable(result.updateAvailable);
         setLatestVersion(result.latestVersion);
         setCurrentVersion(result.currentVersion);
-      }
-
-      if (mounted) {
-        setChecking(false);
       }
     }
 
@@ -42,6 +36,5 @@ export function useUpdateCheck(): UpdateCheckResult {
     updateAvailable,
     latestVersion,
     currentVersion,
-    checking,
   };
 }

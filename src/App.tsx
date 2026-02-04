@@ -60,7 +60,7 @@ export function App({ onSelectAgent }: AppProps): React.ReactElement {
         )}
         <Box flexDirection="column" paddingX={2} paddingY={1}>
           <Text color="yellow">No coding agents detected.</Text>
-          <Text color="gray">Install one of: claude, aider, gh copilot, cursor, continue, cody</Text>
+          <Text color="gray">Install one of: claude, aider, copilot, cursor, continue, cody</Text>
         </Box>
         <StatusBar />
       </Box>

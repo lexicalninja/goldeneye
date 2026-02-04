@@ -10,15 +10,6 @@ function commandExists(cmd: string): boolean {
   }
 }
 
-function ghExtensionInstalled(extension: string): boolean {
-  try {
-    const output = execSync('gh extension list', { encoding: 'utf-8' });
-    return output.includes(extension);
-  } catch {
-    return false;
-  }
-}
-
 const agentDefinitions: AgentDefinition[] = [
   {
     name: 'Claude Code',
@@ -32,9 +23,8 @@ const agentDefinitions: AgentDefinition[] = [
   },
   {
     name: 'GitHub Copilot',
-    command: 'gh',
-    args: ['copilot'],
-    check: async () => commandExists('gh') && ghExtensionInstalled('copilot'),
+    command: 'copilot',
+    check: async () => commandExists('copilot'),
   },
   {
     name: 'Cursor',

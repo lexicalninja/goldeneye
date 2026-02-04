@@ -18,7 +18,7 @@ if isatty 0; and isatty 1
 end
 ${MARKER_END}`;
 
-export function detectShell(): ShellConfig {
+function detectShell(): ShellConfig {
   const shell = process.env.SHELL ?? '';
   const home = homedir();
   const isMac = process.platform === 'darwin';
@@ -41,7 +41,7 @@ export function detectShell(): ShellConfig {
   return { type: 'unknown', rcFile: '' };
 }
 
-export function isInstalled(config: ShellConfig): boolean {
+function isInstalled(config: ShellConfig): boolean {
   if (!config.rcFile || !existsSync(config.rcFile)) {
     return false;
   }

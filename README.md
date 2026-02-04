@@ -19,7 +19,7 @@ Each agent is randomly assigned a GoldenEye 64 character name because why not.
 |-------|---------|
 | Claude Code | `claude` |
 | Gemini CLI | `gemini` |
-| GitHub Copilot | `gh copilot` |
+| GitHub Copilot | `copilot` |
 | Aider | `aider` |
 | Cursor | `cursor` |
 | Continue | `continue` |

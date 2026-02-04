@@ -1,6 +1,6 @@
 import { getVersion } from './version.js';
 
-const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/lexicalninja/goldeneye/main/package.json';
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/lexicalninja/goldeneye/main/package.json';
 const CHECK_TIMEOUT = 3000; // 3 seconds
 
 interface UpdateInfo {
@@ -31,7 +31,8 @@ export async function checkForUpdates(): Promise<UpdateInfo | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CHECK_TIMEOUT);
 
-    const response = await fetch(GITHUB_RAW_URL, {
+    const url = `${GITHUB_RAW_BASE}?t=${Date.now()}`;
+    const response = await fetch(url, {
       signal: controller.signal,
       headers: {
         'User-Agent': 'goldeneye-cli',

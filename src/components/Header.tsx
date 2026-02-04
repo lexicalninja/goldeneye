@@ -1,7 +1,11 @@
 import React from 'react';
 import { Box, Text } from 'ink';
 
-export function Header(): React.ReactElement {
+interface HeaderProps {
+  version?: string;
+}
+
+export function Header({ version }: HeaderProps): React.ReactElement {
   return (
     <Box
       flexDirection="column"
@@ -14,7 +18,9 @@ export function Header(): React.ReactElement {
       <Text bold color="yellow">
         GOLDENEYE
       </Text>
-      <Text color="gray">Coding Agent Launcher</Text>
+      <Text color="gray">
+        Coding Agent Launcher{version ? ` v${version}` : ''}
+      </Text>
     </Box>
   );
 }

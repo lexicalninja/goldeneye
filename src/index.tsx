@@ -8,11 +8,15 @@ import { install, uninstall } from './utils/shellSetup.js';
 import { detectAgents, getInstalledAgents } from './utils/detectAgents.js';
 import { assignCharacters } from './utils/characters.js';
 import { launchAgent } from './utils/launchAgent.js';
+import { getVersion } from './utils/version.js';
+import { checkForUpdates } from './utils/updateChecker.js';
 import type { Agent } from './types.js';
+
+const version = getVersion();
 
 const cli = meow(
   `
-  ${chalk.yellow.bold('GOLDENEYE')} - Coding Agent Launcher
+  ${chalk.yellow.bold('GOLDENEYE')} ${chalk.gray(`v${version}`)} - Coding Agent Launcher
 
   ${chalk.bold('Usage')}
     $ goldeneye              Launch the picker UI
@@ -32,6 +36,7 @@ const cli = meow(
   {
     importMeta: import.meta,
     flags: {},
+    version,
   }
 );
 
@@ -62,10 +67,23 @@ async function main() {
     }
 
     case 'list': {
-      const agents = await detectAgents();
+      const [agents, updateInfo] = await Promise.all([
+        detectAgents(),
+        checkForUpdates(),
+      ]);
       const installed = assignCharacters(getInstalledAgents(agents));
 
-      console.log(chalk.yellow.bold('\nGOLDENEYE') + ' - Detected Agents\n');
+      console.log(chalk.yellow.bold('\nGOLDENEYE') + chalk.gray(` v${version}`) + ' - Detected Agents\n');
+
+      if (updateInfo?.updateAvailable) {
+        console.log(
+          chalk.yellow('⚡ Update available:'),
+          chalk.gray(`${updateInfo.currentVersion} → ${updateInfo.latestVersion}`),
+        );
+        console.log(
+          chalk.gray('   Run: curl -fsSL https://raw.githubusercontent.com/lexicalninja/goldeneye/main/install.sh | bash\n'),
+        );
+      }
 
       if (installed.length === 0) {
         console.log(chalk.gray('No coding agents detected.\n'));

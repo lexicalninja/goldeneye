@@ -1,0 +1,42 @@
+{
+  "name": "goldeneye",
+  "version": "1.0.0",
+  "description": "Coding Agent Launcher - Auto-detect and launch coding agents from a sleek TUI",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "goldeneye": "./bin/goldeneye.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.tsx",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "cli",
+    "tui",
+    "coding-agents",
+    "claude",
+    "aider",
+    "copilot"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "ink": "^4.4.1",
+    "ink-select-input": "^5.0.0",
+    "meow": "^12.1.1",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.0",
+    "@types/node": "^25.2.0",
+    "@types/react": "^18.2.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

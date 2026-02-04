@@ -7,6 +7,8 @@ import { App } from './App.js';
 import { install, uninstall } from './utils/shellSetup.js';
 import { detectAgents, getInstalledAgents } from './utils/detectAgents.js';
 import { assignCharacters } from './utils/characters.js';
+import { launchAgent } from './utils/launchAgent.js';
+import type { Agent } from './types.js';
 
 const cli = meow(
   `
@@ -84,7 +86,17 @@ async function main() {
 
     case undefined: {
       // Launch interactive UI
-      render(<App />);
+      let selectedAgent: Agent | null = null;
+
+      const { waitUntilExit } = render(
+        <App onSelectAgent={(agent) => { selectedAgent = agent; }} />
+      );
+
+      await waitUntilExit();
+
+      if (selectedAgent) {
+        launchAgent(selectedAgent);
+      }
       break;
     }
 

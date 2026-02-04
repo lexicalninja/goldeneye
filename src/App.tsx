@@ -4,29 +4,26 @@ import { Header } from './components/Header.js';
 import { AgentList } from './components/AgentList.js';
 import { StatusBar } from './components/StatusBar.js';
 import { useAgents } from './hooks/useAgents.js';
-import { launchAgent } from './utils/launchAgent.js';
 import type { Agent } from './types.js';
 
-export function App(): React.ReactElement {
+interface AppProps {
+  onSelectAgent: (agent: Agent | null) => void;
+}
+
+export function App({ onSelectAgent }: AppProps): React.ReactElement {
   const { exit } = useApp();
   const { installedAgents, loading, error } = useAgents();
 
   useInput((input, key) => {
     if (input === 'q' || key.escape) {
+      onSelectAgent(null);
       exit();
     }
   });
 
   const handleSelect = (agent: Agent | null) => {
-    if (agent === null) {
-      exit();
-      return;
-    }
+    onSelectAgent(agent);
     exit();
-    // Small delay to let Ink cleanup before launching
-    setTimeout(() => {
-      launchAgent(agent);
-    }, 100);
   };
 
   if (loading) {

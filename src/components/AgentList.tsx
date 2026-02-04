@@ -18,7 +18,7 @@ export function AgentList({ agents, onSelect }: AgentListProps): React.ReactElem
     ...agents.map((agent) => {
       agentMap.set(agent.command, agent);
       return {
-        label: agent.name,
+        label: agent.displayName ?? agent.name,
         value: agent.command,
       };
     }),

@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import { App } from './App.js';
 import { install, uninstall } from './utils/shellSetup.js';
 import { detectAgents, getInstalledAgents } from './utils/detectAgents.js';
+import { assignCharacters } from './utils/characters.js';
 
 const cli = meow(
   `
@@ -60,7 +61,7 @@ async function main() {
 
     case 'list': {
       const agents = await detectAgents();
-      const installed = getInstalledAgents(agents);
+      const installed = assignCharacters(getInstalledAgents(agents));
 
       console.log(chalk.yellow.bold('\nGOLDENEYE') + ' - Detected Agents\n');
 
@@ -68,7 +69,7 @@ async function main() {
         console.log(chalk.gray('No coding agents detected.\n'));
       } else {
         for (const agent of installed) {
-          console.log(chalk.green('✓'), agent.name, chalk.gray(`(${agent.command})`));
+          console.log(chalk.green('✓'), agent.displayName);
         }
         console.log();
       }

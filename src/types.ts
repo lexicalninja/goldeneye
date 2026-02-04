@@ -3,6 +3,7 @@ export interface Agent {
   command: string;
   args?: string[];
   installed: boolean;
+  displayName?: string;
 }
 
 export interface AgentDefinition {

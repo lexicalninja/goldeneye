@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Agent } from '../types.js';
 import { detectAgents, getInstalledAgents } from '../utils/detectAgents.js';
+import { assignCharacters } from '../utils/characters.js';
 
 interface UseAgentsResult {
   agents: Agent[];
@@ -11,6 +12,7 @@ interface UseAgentsResult {
 
 export function useAgents(): UseAgentsResult {
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [installedAgents, setInstalledAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +24,8 @@ export function useAgents(): UseAgentsResult {
         const detected = await detectAgents();
         if (mounted) {
           setAgents(detected);
+          const installed = getInstalledAgents(detected);
+          setInstalledAgents(assignCharacters(installed));
           setLoading(false);
         }
       } catch (err) {
@@ -41,7 +45,7 @@ export function useAgents(): UseAgentsResult {
 
   return {
     agents,
-    installedAgents: getInstalledAgents(agents),
+    installedAgents,
     loading,
     error,
   };
